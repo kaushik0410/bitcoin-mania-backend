@@ -11,12 +11,21 @@ console.log('Loaded MONGO_URI:', process.env.MONGO_URI);
 
 const app = express();
 
-const corsOptions = {
-    origin: 'http://localhost:3000',
-    credentials: true,
-};
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://bitcoin-mania-frontend.onrender.com'
+];
 
-app.use(cors(corsOptions));
+app.use(cors({
+    origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI)
